@@ -51,7 +51,18 @@ public class NettyServerHandle extends ChannelInboundHandlerAdapter {
         //writeAndFlush 是 write + flush
         //将数据写入到缓存，并刷新
         //一般讲，我们对这个发送的数据进行编码
-        ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵", CharsetUtil.UTF_8));
+//        ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵", CharsetUtil.UTF_8));
+
+        ctx.channel().eventLoop().execute(()->{
+            for (int i = 0; i < 3; i++) {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵 \n", CharsetUtil.UTF_8));
+            }
+        });
     }
 
     //处理异常, 一般是需要关闭通道
