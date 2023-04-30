@@ -1,13 +1,15 @@
 package com.netty.star.csdn;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.CharsetUtil;
 
 /**
  * @Author star362
@@ -38,7 +40,12 @@ public class NettyServer {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         //通过socketChannel得到pipeLine，然后向pipeLine中添加处理的handle
-                        socketChannel.pipeline().addLast(new NettyServerHandle());
+                        ChannelPipeline pipeline = socketChannel.pipeline();
+//                        pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
+//                        pipeline.addLast(new LengthFieldPrepender(4));
+//                        pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));//用于解码
+//                        pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));//用于编码
+                        pipeline.addLast(new NettyServerHandle());
                     }
                 }); //给workerGroup 的EventLoop对应的管道设置处理器(可以自定义/也可使用netty的)
         System.err.println("server is ready......");
