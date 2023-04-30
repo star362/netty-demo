@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket客户端</title>
+</head>
+<body>
+<script type="text/javascript">
+    var socket;
+
+    if (window.WebSocket) {
+        socket = new WebSocket("ws://localhost:8888/hll"); //这个就是我们在服务端设置的请求路径
+        //客户端收到服务器端发送的消息，onmessage被调用，相当于服务端的channelRead0方法
+        socket.onmessage = function (event) {
+            var obj = document.getElementById("responseText");
+            obj.value = obj.value + "\n" + event.data;
+        }
+
+        //连接建立成功,onopen回调
+        socket.onopen = function (event) {
+            var obj = document.getElementById("responseText");
+            obj.value = "连接已成功建立";
+        }
+
+        //连接被关闭，onclose回调
+        socket.onclose = function (event) {
+            var obj = document.getElementById("responseText");
+            obj.value = obj.value + "\n" + "连接已断开";
+        }
+    } else {
+        alert("浏览器不支持WebSocket!");
+    }
+
+    function send(message) {
+        if (!window.WebSocket) {
+            return;
+        }
+
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.send(message);
+        } else {
+            alert("连接尚未开启");
+        }
+    }
+
+</script>
+
+<form onsubmit="return false;">
+    <textarea name="message" style="width: 400px; height: 200px;"></textarea>
+
+    <input type="button" value="发送数据" onclick="send(this.form.message.value)">
+
+    <h3>服务端输出：</h3>
+
+    <textarea id="responseText" style="width: 400px; height: 200px;"></textarea>
+
+    <input type="button" onclick="javascript: document.getElementById('responseText').value=''" value="清空内容">
+
+</form>
+</body>
+</html>
+
